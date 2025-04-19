@@ -1,6 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.Razor;
 @using ApiGateway.Models;
-@using ApiGateway.Helper;
 
 @{
     ViewData["Title"] = "Home Page";  // This sets the title in the layout
@@ -42,6 +41,24 @@
     data.Add(apiRequest4); // Add the fourth API response to the list
     data.Add(apiRequest5); // Add the fifth API response to the list
     data.Add(apiRequest6); // Add the sixth API response to the list
+
+    string GetStatusColorClass(int statusCode)
+    {
+        switch (statusCode.ToString()[0])
+        {
+            case '1':
+                return "table-info"; // Blue for informational responses
+            case '2':
+                return "table-success"; // Green for success
+            case '3':
+                return "table-warning"; // Yellow/Orange for redirection (Bootstrap uses warning for this)
+            case '4':
+            case '5':
+                return "table-danger"; // Red for client/server error
+            default:
+                return "table-secondary"; // Grey for others
+        }
+    }
 }
 
 <div class="text-center">
@@ -60,9 +77,9 @@
             {
                 @foreach (var item in data)
                 {
-                    <tr class="@Helper.getStatusColor(item.StatusCode)">
+                    <tr class="@GetStatusColorClass(item.StatusCode)">
                         <th scope="row">@item.StatusCode</th>
-                        <td colspan="7">@item.Request</td> 
+                        <td colspan="7">@item.Endpoint</td> 
                         <td>@item.Time.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     </tr>
                 }
@@ -76,11 +93,3 @@
         </tbody>
     </table>
 </div>
-
-@section Scripts {
-    <!-- Any page-specific scripts would go here -->
-    <script>
-        // Optional: Additional JavaScript for this page
-        console.log("Index page loaded");
-    </script>
-}
