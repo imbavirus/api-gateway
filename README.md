@@ -1,2 +1,2 @@
-# api-gateway
-A simple API Gateway for LACRM
+# API Gateway
+A simple API Gateway that connects to LACRM
