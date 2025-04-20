@@ -1,0 +1,96 @@
+@using Microsoft.AspNetCore.Mvc.Razor;
+@using ApiGateway.Models.Table;
+
+@{
+    ViewData["Title"] = "Home Page";
+
+    ApiRequest apiRequest1 = new ApiRequest() { 
+        StatusCode = 101,
+        Endpoint = "testdata",
+        Time = DateTime.Now 
+    };
+    ApiRequest apiRequest2 = new ApiRequest() { 
+        StatusCode = 202,
+        Endpoint = "testdata",
+        Time = DateTime.Now 
+    };
+    ApiRequest apiRequest3 = new ApiRequest() { 
+        StatusCode = 303,
+        Endpoint = "testdata",
+        Time = DateTime.Now 
+    };
+    ApiRequest apiRequest4 = new ApiRequest() { 
+        StatusCode = 404,
+        Endpoint = "testdata",
+        Time = DateTime.Now 
+    };
+    ApiRequest apiRequest5 = new ApiRequest() { 
+        StatusCode = 505,
+        Endpoint = "testdata",
+        Time = DateTime.Now 
+    };
+    ApiRequest apiRequest6 = new ApiRequest() { 
+        StatusCode = 606,
+        Endpoint = "sgaf",
+        Time = DateTime.Now 
+    };
+
+    List<ApiRequest> data = new List<ApiRequest>(); // Initialize the list of API responses
+    data.Add(apiRequest1); // Add the first API response to the list
+    data.Add(apiRequest2); // Add the second API response to the list
+    data.Add(apiRequest3); // Add the third API response to the list
+    data.Add(apiRequest4); // Add the fourth API response to the list
+    data.Add(apiRequest5); // Add the fifth API response to the list
+    data.Add(apiRequest6); // Add the sixth API response to the list
+
+    string GetStatusColorClass(int statusCode)
+    {
+        switch (statusCode.ToString()[0])
+        {
+            case '1':
+                return "table-info"; // Blue for informational responses
+            case '2':
+                return "table-success"; // Green for success
+            case '3':
+                return "table-warning"; // Yellow/Orange for redirection 
+            case '4':
+            case '5':
+                return "table-danger"; // Red for client/server error
+            default:
+                return "table-secondary"; // Grey for any unexpected status codes
+        }
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">API Calls:</h1>
+    <p>Below are all the calls being made to the api.</p>
+    <table class="table table-fixed table-dark table-striped table-responsive text-start">
+        <thead>
+            <tr>
+                <th scope="col" colspan="1">Status Code</th>
+                <th scope="col" colspan="7">Request</th>
+                <th scope="col" colspan="1">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (data != null && data.Any())
+            {
+                @foreach (var item in data)
+                {
+                    <tr class="@GetStatusColorClass(item.StatusCode)">
+                        <th scope="row" colspan="1">@item.StatusCode</th>
+                        <td colspan="7">@item.Endpoint</td> 
+                        <td colspan="1">@item.Time.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">No API calls have been made.</td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
