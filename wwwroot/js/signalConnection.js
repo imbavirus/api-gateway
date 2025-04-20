@@ -48,10 +48,10 @@ function addApiCallToTable(item) {
     const tr = document.createElement("tr");
     tr.className = getStatusColorClass(item.statusCode); // Use item.statusCode (check casing from C# model)
 
-    const thStatus = document.createElement("th");
-    thStatus.scope = "row";
-    thStatus.colSpan = 1;
-    thStatus.textContent = item.statusCode; // Use item.statusCode
+    const tdStatus = document.createElement("td");
+    tdStatus.scope = "row";
+    tdStatus.colSpan = 1;
+    tdStatus.textContent = item.statusCode; // Use item.statusCode
 
     const tdEndpoint = document.createElement("td");
     tdEndpoint.colSpan = 7;
@@ -62,7 +62,7 @@ function addApiCallToTable(item) {
     // Use item.time or item.requestTimestamp depending on what the hub sends
     tdTime.textContent = formatDateTime(item.time || item.requestTimestamp);
 
-    tr.appendChild(thStatus);
+    tr.appendChild(tdStatus);
     tr.appendChild(tdEndpoint);
     tr.appendChild(tdTime);
 
@@ -87,6 +87,9 @@ connection.on("ReceiveInitialData", (allData) => {
         // Show message if no initial data
         tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No API calls recorded yet.</td></tr>';
     }
+    if (window.tableSorter && typeof window.tableSorter.resort === 'function') {
+        window.tableSorter.resort();
+    }
 });
 
 // Handler for receiving a single new data item
@@ -102,6 +105,9 @@ connection.on("ReceiveNewData", (newItem) => {
     }
 
     addApiCallToTable(newItem);
+    if (window.tableSorter && typeof window.tableSorter.resort === 'function') {
+        window.tableSorter.resort();
+    }
 });
 
 

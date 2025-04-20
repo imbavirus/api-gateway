@@ -1,7 +1,7 @@
 .table-scroll-container {
     /* Adjust this value based on the height of elements above/below the table */
     /* Example: 100vh (viewport height) minus header, footer, title, paragraph, margins etc. */
-    max-height: calc(100vh - 280px); 
+    max-height: calc(100vh - 330px); 
     overflow-y: auto; /* Enable vertical scrollbar only when needed */
     position: relative; /* Needed for sticky header positioning */
 }
