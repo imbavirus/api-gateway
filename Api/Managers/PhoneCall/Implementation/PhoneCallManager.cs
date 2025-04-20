@@ -28,7 +28,8 @@ public class PhoneCallManager : IPhoneCallManager
         IEnumerable<ContactResponse> existingContacts = await _lacrmManager.GetContactsAsync(callRequest.CallersTelephoneNumber);
 
         if (!existingContacts.Any(x => x.Phone?.Any(y => y.Text == callRequest.CallersTelephoneNumber) ?? false))
-        {
+        {   
+            // If the contact does not exist, we need to create it.
             CreateContactResponse response = await _lacrmManager.CreateContact(contact);
             contactId = response.ContactId;
             result = "Contact created successfully!";
