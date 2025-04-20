@@ -1,0 +1,20 @@
+.table-scroll-container {
+    /* Adjust this value based on the height of elements above/below the table */
+    /* Example: 100vh (viewport height) minus header, footer, title, paragraph, margins etc. */
+    max-height: calc(100vh - 280px); 
+    overflow-y: auto; /* Enable vertical scrollbar only when needed */
+    position: relative; /* Needed for sticky header positioning */
+}
+
+/* Make table header cells sticky */
+.table-scroll-container thead th {
+   position: sticky;
+   top: 0; /* Stick to the top of the container */
+   z-index: 1; /* Ensure header stays above body content */
+   background-color: #212529 !important; 
+}
+
+/* Ensure tbody doesn't overlap the sticky header visually */
+.table-scroll-container tbody tr:first-child td {
+     border-top: none;
+}

@@ -1,10 +1,12 @@
 using ApiGateway.Helpers;
 using ApiGateway.Middleware;
 using ApiGateway.Services;
+using ApiGateway.Managers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
+using ApiGateway.Hubs;
 
 // Load environment variables from .env file
 Env.Load();
@@ -26,11 +28,14 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 
     // Clear existing locations 
     options.ViewLocationFormats.Clear();
-    options.AreaViewLocationFormats.Clear();
+    // options.AreaViewLocationFormats.Clear();
 
     // Add your custom locations prefixed with /Web
     options.ViewLocationFormats.Add("/Web/Views/{1}/{0}" + RazorViewEngine.ViewExtension); // /Web/Views/Controller/Action.cshtml
     options.ViewLocationFormats.Add("/Web/Views/Shared/{0}" + RazorViewEngine.ViewExtension); // /Web/Views/Shared/Action.cshtml
+    // options.AreaViewLocationFormats.Add("/Web/Areas/{2}/Views/{1}/{0}.cshtml");
+    // options.AreaViewLocationFormats.Add("/Web/Areas/{2}/Views/Shared/{0}.cshtml");
+    // options.AreaViewLocationFormats.Add("/Web/Views/Shared/{0}.cshtml");
 });
 
 // Add API controllers
@@ -63,9 +68,14 @@ builder.Services.AddHttpClient<LacrmHelper>();
 // Add helpers.
 builder.Services.AddSingleton<LacrmHelper>();
 
+// Add Datastore
+builder.Services.AddSingleton<InMemoryDataStoreManager>();
+
+// Add SignalR for table data handling
+builder.Services.AddSignalR();
+
 // Add Services
 builder.Services.AddScoped<IPhoneCallService, PhoneCallService>();
-
 
 var app = builder.Build();
 
@@ -101,5 +111,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers(); // For API endpoints
+app.MapHub<DataHub>("/dataHub");
 
 app.Run();

@@ -1,8 +1,7 @@
 namespace ApiGateway.Middleware;
 
 /// <summary>
-/// Defines the contract for handling a request within the middleware pipeline.
-/// Note: This interface is not directly used by the standard ASP.NET Core
+/// Defines the exception middleware
 /// UseMiddleware<T> extension method, which relies on convention (InvokeAsync method).
 /// </summary>
 public interface IExceptionMiddleware

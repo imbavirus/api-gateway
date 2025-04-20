@@ -1,3 +1,4 @@
+namespace ApiGateway.Models.Exceptions;
 
 public class ErrorResponse
 {
