@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using ApiGateway.Models.Table;
 
-namespace ApiGateway.Managers;
+namespace ApiGateway.Api.Managers.Data;
 
 /// <summary>
 /// Defines the contract for an in-memory data store for API requests.

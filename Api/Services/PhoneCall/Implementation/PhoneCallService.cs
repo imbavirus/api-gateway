@@ -1,25 +1,25 @@
-using ApiGateway.Helpers;
+using ApiGateway.Api.Helpers;
 using ApiGateway.Models.TelephonyServer;
 using Microsoft.AspNetCore.Mvc;
-using ApiGateway.Managers.Lacrm;
+using ApiGateway.Api.Managers.PhoneCall;
 
-namespace ApiGateway.Services;
+namespace ApiGateway.Api.Services.PhoneCall.Implementation;
 
 /// <summary>
 /// Implements the logic for processing phone call events by interacting with LACRM.
 /// </summary>
 public class PhoneCallService : IPhoneCallService
 {
-    private readonly ILacrmHttpManager _lacrmHttpManager;
+    private readonly IPhoneCallManager _phoneCallManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PhoneCallService"/> class.
     /// </summary>
-    /// <param name="lacrmHttpManager">The injected LACRM helper instance.</param>
+    /// <param name="phoneCallManager">The injected LACRM helper instance.</param>
     /// <param name="logger">The injected logger instance.</param>
-    public PhoneCallService(ILacrmHttpManager lacrmHttpManager)
+    public PhoneCallService(IPhoneCallManager phoneCallManager)
     {
-        _lacrmHttpManager = lacrmHttpManager ?? throw new ArgumentNullException(nameof(lacrmHttpManager));
+        _phoneCallManager = phoneCallManager ?? throw new ArgumentNullException(nameof(phoneCallManager));
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class PhoneCallService : IPhoneCallService
     public async Task<string> ProcessIncomingCallAsync(CallRequest callRequest)
     {
             // Call the manager method
-            var searchResult = await _lacrmHttpManager.CallLacrmApiAsync("GetUser");
-            return Helper.StringifyObject(searchResult);
+            string message = await _phoneCallManager.ProcessIncomingCallAsync(callRequest);
+            return message;
     }
 }

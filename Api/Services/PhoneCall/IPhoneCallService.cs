@@ -1,7 +1,6 @@
 using ApiGateway.Models.TelephonyServer;
-using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGateway.Services;
+namespace ApiGateway.Api.Services.PhoneCall;
 
 /// <summary>
 /// Defines the contract for processing phone call events.

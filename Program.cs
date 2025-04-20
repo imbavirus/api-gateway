@@ -1,12 +1,16 @@
-using ApiGateway.Middleware;
-using ApiGateway.Services;
-using ApiGateway.Managers;
+using ApiGateway.Api.Middleware.Implementation;
+using ApiGateway.Api.Services.PhoneCall;
+using ApiGateway.Api.Managers.Data.Implementation;
+using ApiGateway.Api.Services.PhoneCall.Implementation;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
-using ApiGateway.Hubs;
-using ApiGateway.Managers.Lacrm.Implementation;
+using ApiGateway.Api.Hubs;
+using ApiGateway.Api.Managers.Lacrm.Implementation;
+using ApiGateway.Api.Managers.PhoneCall.Implementation;
+using ApiGateway.Api.Managers.PhoneCall;
+using ApiGateway.Api.Managers.Lacrm;
 
 // Load environment variables from .env file
 Env.Load();
@@ -35,7 +39,12 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 });
 
 // Add API controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Allow trailing commas in JSON input since the object is sent as such
+        options.JsonSerializerOptions.AllowTrailingCommas = true;
+    });
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -59,10 +68,12 @@ builder.Services.AddResponseCompression(options =>
 // Add services to the container.
 
 // Register HttpClient for LacrmHttpManager
-builder.Services.AddHttpClient<LacrmHttpManager>();
+builder.Services.AddHttpClient<ILacrmHttpManager, LacrmHttpManager>();
 
-// Add helpers.
-builder.Services.AddSingleton<LacrmHttpManager>();
+// Add managers.
+builder.Services.AddSingleton<ILacrmManager, LacrmManager>();
+builder.Services.AddSingleton<ILacrmHttpManager, LacrmHttpManager>();
+builder.Services.AddSingleton<IPhoneCallManager, PhoneCallManager>();
 
 // Add Datastore
 builder.Services.AddSingleton<InMemoryDataStoreManager>();

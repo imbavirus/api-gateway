@@ -1,4 +1,4 @@
-namespace ApiGateway.Middleware;
+namespace ApiGateway.Api.Middleware;
 
 /// <summary>
 /// Defines the exception middleware

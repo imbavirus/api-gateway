@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace ApiGateway.Helpers;
+namespace ApiGateway.Api.Helpers;
 public static class Helper
 {
 
@@ -22,5 +22,5 @@ public static class Helper
             ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
         });
         return printValue;
-    }
+    }    
 }

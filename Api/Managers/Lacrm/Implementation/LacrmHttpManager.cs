@@ -1,13 +1,15 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using ApiGateway.Hubs;
+using System.Text.Json.Serialization;
+using ApiGateway.Api.Hubs;
+using ApiGateway.Api.Managers.Data.Implementation;
 using ApiGateway.Models.Exceptions;
 using ApiGateway.Models.Table;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace ApiGateway.Managers.Lacrm.Implementation;
+namespace ApiGateway.Api.Managers.Lacrm.Implementation;
 
 public class LacrmHttpManager : ILacrmHttpManager
 {
@@ -16,6 +18,7 @@ public class LacrmHttpManager : ILacrmHttpManager
     private readonly string _lacrmApiKey;
     private readonly IHubContext<DataHub> _hubContext;
     private readonly InMemoryDataStoreManager _dataStore;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
     
 
     public LacrmHttpManager(
@@ -30,15 +33,26 @@ public class LacrmHttpManager : ILacrmHttpManager
         _lacrmApiKey = configuration["LACRM_API_KEY"] ?? throw new ConfigurationException("LACRM API Key is not configured.");
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         _dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
+
+        // Initialize and cache serializer options
+        _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            ReferenceHandler = ReferenceHandler.Preserve
+        };
     }
 
     /// <summary>
-    /// Calls the Less Annoying CRM API.
+    /// Calls the Less Annoying CRM API and deserializes the response.
     /// </summary>
+    /// <typeparam name="T">The type to deserialize the successful JSON response into.</typeparam>
     /// <param name="functionName">The API function to call (e.g., "SearchContacts").</param>
-    /// <param name="parameters">A dictionary of parameters for the API function.</param>
-    /// <returns>A JsonElement representing the API response on success, or null on failure.</returns>
-    public async Task<object?> CallLacrmApiAsync(string functionName, Dictionary<string, object>? data = null)
+    /// <param name="data">A dictionary of parameters for the API function.</param>
+    /// <returns>A deserialized object of type T on success, or null/default if the response is null or empty JSON.</returns>
+    /// <exception cref="LacrmException">Thrown if the API call fails (non-success status code) or deserialization fails.</exception>
+    /// <exception cref="ConfigurationException">Thrown for configuration issues.</exception>
+    /// <exception cref="HttpRequestException">Thrown for network issues during the HTTP call.</exception>
+    public async Task<T?> CallLacrmApiAsync<T>(string functionName, Dictionary<string, object?>? data = null)
     {
         if (_lacrmApiKey == "YOUR_API_KEY_HERE")
         {
@@ -83,14 +97,7 @@ public class LacrmHttpManager : ILacrmHttpManager
 
         if (response.IsSuccessStatusCode)
         {
-            // Deserialize successful response
-            using var jsonDoc = JsonDocument.Parse(responseContent);
-
-            var result = JsonSerializer.Deserialize<object>(jsonDoc.RootElement.GetRawText(), new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
+            var result = JsonSerializer.Deserialize<T?>(responseContent, _jsonSerializerOptions);
             return result;
         }
         else

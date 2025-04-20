@@ -1,9 +1,9 @@
 using ApiGateway.Models.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
-using ApiGateway.Helpers;
+using ApiGateway.Api.Helpers;
 using System.Text.Json;
 
-namespace ApiGateway.Middleware;
+namespace ApiGateway.Api.Middleware.Implementation;
 
 /// <summary>
 /// Middleware to handle exceptions globally, log them, and return a standardized error response.

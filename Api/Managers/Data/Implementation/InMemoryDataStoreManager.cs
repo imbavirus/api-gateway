@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using ApiGateway.Models.Table;
 
-namespace ApiGateway.Managers;
+namespace ApiGateway.Api.Managers.Data.Implementation;
 
 public class InMemoryDataStoreManager : IInMemoryDataStoreManager
 {

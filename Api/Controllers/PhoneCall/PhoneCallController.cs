@@ -1,8 +1,8 @@
 using ApiGateway.Models.TelephonyServer;
-using ApiGateway.Services;
+using ApiGateway.Api.Services.PhoneCall;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGateway.Controllers.API;
+namespace ApiGateway.Api.Controllers.PhoneCall;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -31,8 +31,8 @@ public class PhoneCallController : Controller
     [HttpPost]
     public async Task<IActionResult> PostDataAsync([FromBody] CallRequest data)
     {
-        string result = await _phoneCallService.ProcessIncomingCallAsync(data);
+        string message = await _phoneCallService.ProcessIncomingCallAsync(data);
         // Process the data here
-        return Ok(new { message = "Phone call data submitted successfully.", data = result });
+        return Ok(new { message });
     }
 };

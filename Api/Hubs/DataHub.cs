@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using ApiGateway.Managers;
 using ApiGateway.Models.Table;
+using ApiGateway.Api.Managers.Data.Implementation;
 
-namespace ApiGateway.Hubs;
+namespace ApiGateway.Api.Hubs;
 
 public class DataHub : Hub
 {

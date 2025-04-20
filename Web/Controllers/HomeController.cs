@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGateway.Controllers.Web;
+namespace ApiGateway.Web.Controllers;
 
 public class HomeController : Controller
 {
