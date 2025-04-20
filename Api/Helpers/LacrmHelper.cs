@@ -28,7 +28,6 @@ public class LacrmHelper
     /// <returns>A JsonElement representing the API response on success, or null on failure.</returns>
     public async Task<JsonElement?> CallLacrmApiAsync(string functionName, Dictionary<string, object>? data = null)
     {
-        Console.WriteLine(_lacrmApiKey);
         if (_lacrmApiKey == "YOUR_API_KEY_HERE")
         {
             throw new ConfigurationException("LACRM API Key is not configured.");
