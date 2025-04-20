@@ -4,13 +4,12 @@ using System.Text.Json;
 using ApiGateway.Hubs;
 using ApiGateway.Models.Exceptions;
 using ApiGateway.Models.Table;
-using ApiGateway.Managers;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace ApiGateway.Helpers;
+namespace ApiGateway.Managers.Lacrm.Implementation;
 
-public class LacrmHelper
+public class LacrmHttpManager : ILacrmHttpManager
 {
     private readonly HttpClient _httpClient;
     private readonly string _lacrmApiUrl;
@@ -19,7 +18,7 @@ public class LacrmHelper
     private readonly InMemoryDataStoreManager _dataStore;
     
 
-    public LacrmHelper(
+    public LacrmHttpManager(
         HttpClient httpClient,
         IConfiguration configuration,
         IHubContext<DataHub> hubContext,
@@ -39,7 +38,7 @@ public class LacrmHelper
     /// <param name="functionName">The API function to call (e.g., "SearchContacts").</param>
     /// <param name="parameters">A dictionary of parameters for the API function.</param>
     /// <returns>A JsonElement representing the API response on success, or null on failure.</returns>
-    public async Task<JsonElement?> CallLacrmApiAsync(string functionName, Dictionary<string, object>? data = null)
+    public async Task<object?> CallLacrmApiAsync(string functionName, Dictionary<string, object>? data = null)
     {
         if (_lacrmApiKey == "YOUR_API_KEY_HERE")
         {
@@ -86,7 +85,13 @@ public class LacrmHelper
         {
             // Deserialize successful response
             using var jsonDoc = JsonDocument.Parse(responseContent);
-            return jsonDoc.RootElement.Clone();
+
+            var result = JsonSerializer.Deserialize<object>(jsonDoc.RootElement.GetRawText(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            return result;
         }
         else
         {        

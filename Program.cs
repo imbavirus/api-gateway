@@ -1,4 +1,3 @@
-using ApiGateway.Helpers;
 using ApiGateway.Middleware;
 using ApiGateway.Services;
 using ApiGateway.Managers;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
 using ApiGateway.Hubs;
+using ApiGateway.Managers.Lacrm.Implementation;
 
 // Load environment variables from .env file
 Env.Load();
@@ -28,14 +28,10 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 
     // Clear existing locations 
     options.ViewLocationFormats.Clear();
-    // options.AreaViewLocationFormats.Clear();
 
     // Add your custom locations prefixed with /Web
     options.ViewLocationFormats.Add("/Web/Views/{1}/{0}" + RazorViewEngine.ViewExtension); // /Web/Views/Controller/Action.cshtml
     options.ViewLocationFormats.Add("/Web/Views/Shared/{0}" + RazorViewEngine.ViewExtension); // /Web/Views/Shared/Action.cshtml
-    // options.AreaViewLocationFormats.Add("/Web/Areas/{2}/Views/{1}/{0}.cshtml");
-    // options.AreaViewLocationFormats.Add("/Web/Areas/{2}/Views/Shared/{0}.cshtml");
-    // options.AreaViewLocationFormats.Add("/Web/Views/Shared/{0}.cshtml");
 });
 
 // Add API controllers
@@ -62,11 +58,11 @@ builder.Services.AddResponseCompression(options =>
 
 // Add services to the container.
 
-// Register HttpClient for LacrmHelper
-builder.Services.AddHttpClient<LacrmHelper>();
+// Register HttpClient for LacrmHttpManager
+builder.Services.AddHttpClient<LacrmHttpManager>();
 
 // Add helpers.
-builder.Services.AddSingleton<LacrmHelper>();
+builder.Services.AddSingleton<LacrmHttpManager>();
 
 // Add Datastore
 builder.Services.AddSingleton<InMemoryDataStoreManager>();

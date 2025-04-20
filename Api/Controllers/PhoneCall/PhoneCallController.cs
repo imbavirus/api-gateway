@@ -33,6 +33,6 @@ public class PhoneCallController : Controller
     {
         string result = await _phoneCallService.ProcessIncomingCallAsync(data);
         // Process the data here
-        return Ok(new { message = "Data received successfully", receivedData = result });
+        return Ok(new { message = "Phone call data submitted successfully.", data = result });
     }
 };
