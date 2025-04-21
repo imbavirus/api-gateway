@@ -129,15 +129,15 @@ public class LacrmHttpManagerTests
             );
 
         // Verify DataStore logging
-        _mockDataStore.Verify(static ds => ds.AddData(It.Is<ApiRequest>(static ar =>
-            ar.StatusCode == (int)HttpStatusCode.OK &&
-            ar.Endpoint == TestFunctionName
+        _mockDataStore.Verify(static ds => ds.AddData(It.Is<ApiRequest>(static x =>
+            x.StatusCode == (int)HttpStatusCode.OK &&
+            x.Endpoint == TestFunctionName
         )), Times.Once);
 
         // Verify SignalR broadcast
         _mockClientProxy.Verify(static c => c.SendCoreAsync(
             "ReceiveNewData",
-            It.Is<object[]>(static o => o.Length == 1 && ((ApiRequest)o[0]).StatusCode == (int)HttpStatusCode.OK),
+            It.Is<object[]>(static x => x.Length == 1 && ((ApiRequest)x[0]).StatusCode == (int)HttpStatusCode.OK),
             It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -185,7 +185,7 @@ public class LacrmHttpManagerTests
             .Verify(
                 "SendAsync",
                 Times.Once(),
-                ItExpr.Is<HttpRequestMessage>(req =>
+                ItExpr.Is<HttpRequestMessage>(static req =>
                     req.Method == HttpMethod.Post &&
                     req.RequestUri!.ToString().StartsWith($"{TestApiUrl}?APIToken={TestApiKey}") // Basic checks are fine here
                 ),
@@ -199,8 +199,8 @@ public class LacrmHttpManagerTests
         Assert.True(await ContentHasNullParameters(capturedRequest.Content), "Request body should have null Parameters");
 
          // Verify logging and SignalR (these should already be correct)
-        _mockDataStore.Verify(ds => ds.AddData(It.Is<ApiRequest>(ar => ar.StatusCode == (int)HttpStatusCode.OK)), Times.Once);
-        _mockClientProxy.Verify(c => c.SendCoreAsync("ReceiveNewData", It.Is<object[]>(args => args != null && args.Length > 0), It.IsAny<CancellationToken>()), Times.Once);
+        _mockDataStore.Verify(static ds => ds.AddData(It.Is<ApiRequest>(x => x.StatusCode == (int)HttpStatusCode.OK)), Times.Once);
+        _mockClientProxy.Verify(static c => c.SendCoreAsync("ReceiveNewData", It.Is<object[]>(x => x != null && x.Length > 0), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     // Helper to check request body content
@@ -233,15 +233,15 @@ public class LacrmHttpManagerTests
         Assert.Contains(errorResponseContent, exception.Message); // Check if the response content is in the message
 
         // Verify DataStore logging
-        _mockDataStore.Verify(ds => ds.AddData(It.Is<ApiRequest>(ar =>
-            ar.StatusCode == (int)HttpStatusCode.InternalServerError &&
-            ar.Endpoint == TestFunctionName
+        _mockDataStore.Verify(static ds => ds.AddData(It.Is<ApiRequest>(x =>
+            x.StatusCode == (int)HttpStatusCode.InternalServerError &&
+            x.Endpoint == TestFunctionName
         )), Times.Once);
 
         // Verify SignalR broadcast
-        _mockClientProxy.Verify(c => c.SendCoreAsync(
+        _mockClientProxy.Verify(static c => c.SendCoreAsync(
             "ReceiveNewData",
-            It.Is<object[]>(static o => o.Length == 1 && ((ApiRequest)o[0]).StatusCode == (int)HttpStatusCode.InternalServerError),
+            It.Is<object[]>(static x => x.Length == 1 && ((ApiRequest)x[0]).StatusCode == (int)HttpStatusCode.InternalServerError),
             It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -260,8 +260,8 @@ public class LacrmHttpManagerTests
         );
 
         // Verify logging and SignalR still happened before the exception
-         _mockDataStore.Verify(ds => ds.AddData(It.Is<ApiRequest>(ar => ar.StatusCode == (int)HttpStatusCode.OK)), Times.Once);
-         _mockClientProxy.Verify(c => c.SendCoreAsync("ReceiveNewData", It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()), Times.Once);
+         _mockDataStore.Verify(static ds => ds.AddData(It.Is<ApiRequest>(x => x.StatusCode == (int)HttpStatusCode.OK)), Times.Once);
+         _mockClientProxy.Verify(static c => c.SendCoreAsync("ReceiveNewData", It.Is<object[]>(x => x != null), It.IsAny<CancellationToken>()), Times.Once);
     }
 
 
@@ -289,8 +289,8 @@ public class LacrmHttpManagerTests
 
         // Verify nothing else was called
         _mockHttpMessageHandler.Protected().Verify("SendAsync", Times.Never(), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
-        _mockDataStore.Verify(ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
-        _mockClientProxy.Verify(c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()), Times.Never);
+        _mockDataStore.Verify(static ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
+        _mockClientProxy.Verify(static c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(x => x != null), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -311,9 +311,9 @@ public class LacrmHttpManagerTests
             _lacrmHttpManager.CallLacrmApiAsync<TestDto>(TestFunctionName)
         );
 
-         // Verify nothing was logged/sent *after* the exception (as SendAsync failed)
-        _mockDataStore.Verify(ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
-        _mockClientProxy.Verify(c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()), Times.Never);
+        // Verify nothing was logged/sent *after* the exception (as SendAsync failed)
+        _mockDataStore.Verify(static ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
+        _mockClientProxy.Verify(static c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(x => x != null), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -343,9 +343,7 @@ public class LacrmHttpManagerTests
             );
 
         // Verify no interaction with Hub or DataStore
-         _mockDataStore.Verify(ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
-         _mockClientProxy.Verify(
-             x => x.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()),
-             Times.Never);
+        _mockDataStore.Verify(static ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
+        _mockClientProxy.Verify(static c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(x => x != null), It.IsAny<CancellationToken>()), Times.Never);
     }
 }
