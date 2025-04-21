@@ -54,6 +54,10 @@ public class LacrmHttpManager : ILacrmHttpManager
     /// <exception cref="HttpRequestException">Thrown for network issues during the HTTP call.</exception>
     public async Task<T?> CallLacrmApiAsync<T>(string functionName, Dictionary<string, object?>? data = null)
     {
+        if (string.IsNullOrWhiteSpace(functionName))
+        {
+            throw new NullReferenceException("Function name cannot be null or empty.");
+        }
         if (_lacrmApiKey == "YOUR_API_KEY_HERE")
         {
             throw new ConfigurationException("LACRM API Key is not configured.");

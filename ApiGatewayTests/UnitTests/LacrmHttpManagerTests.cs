@@ -61,9 +61,7 @@ public class LacrmHttpManagerTests
         _mockHubContext.Setup(static h => h.Clients).Returns(_mockHubClients.Object);
         _mockHubClients.Setup(static c => c.All).Returns(_mockClientProxy.Object);
 
-        // Mock IInMemoryDataStoreManager (assuming it has a virtual AddData method or an interface)
-        // If IInMemoryDataStoreManager is concrete with no interface/virtual methods,
-        // you might need to refactor it or use a wrapper.
+        // Mock IInMemoryDataStoreManager
         _mockDataStore = new Mock<IInMemoryDataStoreManager>(); // Adjust if it takes constructor args
 
         // Create the instance of the class under test
@@ -316,5 +314,38 @@ public class LacrmHttpManagerTests
          // Verify nothing was logged/sent *after* the exception (as SendAsync failed)
         _mockDataStore.Verify(ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
         _mockClientProxy.Verify(c => c.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")] // Whitespace
+    public async Task CallLacrmApiAsync_NullOrWhitespaceFunctionName_ThrowsNullReferenceException(string? invalidFunctionName)
+    {
+        // Arrange
+        var data = new Dictionary<string, object?> { { "key", "value" } }; // Dummy data
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<NullReferenceException>(() =>
+            _lacrmHttpManager.CallLacrmApiAsync<object>(invalidFunctionName!, data)
+        );
+
+        Assert.Equal("Function name cannot be null or empty.", exception.Message);
+
+        // Verify no HTTP call was made
+        _mockHttpMessageHandler
+            .Protected()
+            .Verify(
+                "SendAsync",
+                Times.Never(), // Crucial verification
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            );
+
+        // Verify no interaction with Hub or DataStore
+         _mockDataStore.Verify(ds => ds.AddData(It.IsAny<ApiRequest>()), Times.Never);
+         _mockClientProxy.Verify(
+             x => x.SendCoreAsync(It.IsAny<string>(), It.Is<object[]>(args => args != null), It.IsAny<CancellationToken>()),
+             Times.Never);
     }
 }
