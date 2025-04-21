@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.SignalR;
 using ApiGateway.Models.Table;
-using ApiGateway.Api.Managers.Data.Implementation;
+using ApiGateway.Api.Managers.Data;
 
 namespace ApiGateway.Api.Hubs;
 
 public class DataHub : Hub
 {
-    private readonly InMemoryDataStoreManager _dataStore;
+    private readonly IInMemoryDataStoreManager _dataStore;
 
     // Inject the singleton data store service
-    public DataHub(InMemoryDataStoreManager dataStore)
+    public DataHub(IInMemoryDataStoreManager dataStore)
     {
         _dataStore = dataStore;
     }

@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ApiGateway.Api.Hubs;
-using ApiGateway.Api.Managers.Data.Implementation;
+using ApiGateway.Api.Managers.Data;
 using ApiGateway.Models.Exceptions;
 using ApiGateway.Models.Table;
 using Microsoft.AspNetCore.SignalR;
@@ -17,7 +17,7 @@ public class LacrmHttpManager : ILacrmHttpManager
     private readonly string _lacrmApiUrl;
     private readonly string _lacrmApiKey;
     private readonly IHubContext<DataHub> _hubContext;
-    private readonly InMemoryDataStoreManager _dataStore;
+    private readonly IInMemoryDataStoreManager _dataStore;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     
 
@@ -25,7 +25,7 @@ public class LacrmHttpManager : ILacrmHttpManager
         HttpClient httpClient,
         IConfiguration configuration,
         IHubContext<DataHub> hubContext,
-        InMemoryDataStoreManager dataStore
+        IInMemoryDataStoreManager dataStore
         )
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -77,7 +77,7 @@ public class LacrmHttpManager : ILacrmHttpManager
         var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
         // Create the HttpRequestMessage
-        using var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);        
+        var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);        
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         request.Content = content;
 

@@ -11,6 +11,10 @@ using ApiGateway.Api.Managers.Lacrm.Implementation;
 using ApiGateway.Api.Managers.PhoneCall.Implementation;
 using ApiGateway.Api.Managers.PhoneCall;
 using ApiGateway.Api.Managers.Lacrm;
+using ApiGateway.Api.Managers.Data;
+using FluentValidation.AspNetCore;
+using ApiGateway.Models.Validators;
+using FluentValidation;
 
 // Load environment variables from .env file
 Env.Load();
@@ -46,6 +50,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.AllowTrailingCommas = true;
     });
 
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+
+// Automatically register all validators in the assembly containing CallRequestValidator
+builder.Services.AddValidatorsFromAssemblyContaining<CallRequestValidator>();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -76,7 +86,7 @@ builder.Services.AddSingleton<ILacrmHttpManager, LacrmHttpManager>();
 builder.Services.AddSingleton<IPhoneCallManager, PhoneCallManager>();
 
 // Add Datastore
-builder.Services.AddSingleton<InMemoryDataStoreManager>();
+builder.Services.AddSingleton<IInMemoryDataStoreManager,InMemoryDataStoreManager>();
 
 // Add SignalR for table data handling
 builder.Services.AddSignalR();
