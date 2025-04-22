@@ -59,10 +59,10 @@ The API Gateway should now be running, typically on `http://localhost:5132` as c
 The Swagger page can be found at `http://localhost:5132/swagger/index.html`. (Assuming you use 5132 as your port)
 
 ### Running Tests
-        ```bash
-        dotnet test
-        ```
 
+   ```bash
+    dotnet test
+   ```
 
 ## Usage
 
