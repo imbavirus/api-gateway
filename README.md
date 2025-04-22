@@ -34,7 +34,7 @@ Follow these instructions to get the project up and running on your local machin
     *   Rename or copy `.env.example` to `.env`.
     *   Update `.env` with your api key from LACRM:
       
-    ```json
+    ```env
     LACRM_API_KEY=YOUR_API_KEY_HERE
     ```
 
