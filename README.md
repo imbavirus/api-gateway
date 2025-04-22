@@ -23,21 +23,24 @@ Follow these instructions to get the project up and running on your local machin
 ### Installation & Configuration
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <your-repository-url>
     cd ApiGateway # Or your specific project directory name
     ```
 
-2.  **Configure Application Settings:**
+3.  **Configure Application Settings:**
     *   This project uses `appsettings.json`, environment variables, and user secrets for configuration.
     *   Rename or copy `.env.example` to `.env`.
     *   Update `.env` with your api key from LACRM:
-    ```
+      
+    ```json
     LACRM_API_KEY=YOUR_API_KEY_HERE
     ```
 
-3.  **Restore Dependencies:**
+4.  **Restore Dependencies:**
     (Usually happens automatically with `dotnet run` or when opening in an IDE, but can be done manually)
+    
     ```bash
     dotnet restore
     ```
@@ -45,12 +48,14 @@ Follow these instructions to get the project up and running on your local machin
 ### Running the Application
 
 1.  **Using the .NET CLI:**
+   
     ```bash
     dotnet run --project .\ApiGateway
     ```
+    
     (This will typically build and run the project using the `Development` environment configuration)
 
-2.  **Using an IDE:**
+3.  **Using an IDE:**
     *   Open the solution (`.sln`) or project (`.csproj`) file in Visual Studio or Rider.
     *   Press the "Run" button (often F5).
     *   For VS Code, ensure you have the C# Dev Kit extension installed and use the Run and Debug panel.
@@ -71,6 +76,7 @@ Explain how to interact with the API Gateway endpoints.
 *   **Example Endpoint:** `GET /gateway/contacts`
     *   **Description:** Retrieves a list of contacts by forwarding the request to the appropriate LACRM endpoint.
     *   **Example Request:**
+      
         ```json        
         {
             "eventName": "telephone_call",
@@ -80,14 +86,18 @@ Explain how to interact with the API Gateway endpoints.
             "callersTelephoneNumber": "01527306999"
         }
         ```
+  
     *   **Responses:** (Describe the expected JSON response format, likely mirroring or transforming the LACRM response)
         New Contact created:
+        
         ```json
         {
             "message": "Contact created successfully!"
         }
         ```
+        
         Contact exists:
+        
         ```json
         {
             "message": "Contact already exists!"
